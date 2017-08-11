@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # coding=utf-8
 
 """
@@ -17,19 +18,21 @@ You should have received a copy of the GNU General Public License
 along with QtPip.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from qtpy import QtWidgets, QtGui, QtCore
+import sys
+from qtpy import QtWidgets
+from qtpip._qpipwidget import QPipWidget
 
 
-def may_take_time(fnc):
-	
-	def inner(*args, **kwargs):
-		
-		QtWidgets.QApplication.setOverrideCursor(QtGui.QCursor(
-			QtCore.Qt.WaitCursor))
-		QtWidgets.QApplication.processEvents()
-		retval = fnc(*args, **kwargs)
-		QtWidgets.QApplication.restoreOverrideCursor()
-		QtWidgets.QApplication.processEvents()
-		return retval
-		
-	return inner
+def main():
+
+	app = QtWidgets.QApplication(sys.argv)
+	w = QPipWidget()
+	w.resize(1000, 600)
+	w.move(300, 300)
+	w.setWindowTitle('Python Package Manager')
+	w.show()
+	sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+	main()
