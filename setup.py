@@ -32,11 +32,11 @@ def data_files():
 
 setup(
 	name="python-qtpip",
-	version='0.1.4',
+	version='0.1.5',
 	description="A graphical manager for PyPi plus an OpenSesame extension",
 	author="Sebastiaan Mathot",
 	author_email="s.mathot@cogsci.nl",
-	url="https://www.cogsci.nl/smathot",
+	url="https://github.com/smathot/python-qtpip",
 	classifiers=[
 		'Intended Audience :: Science/Research',
 		'Topic :: Scientific/Engineering',
@@ -48,11 +48,14 @@ setup(
 		'Programming Language :: Python :: 3',
 	],
 	entry_points={
-		'gui_scripts': [
+		'console_scripts': [
 			'qtpip = qtpip.__main__:main'
 		]
 	},
-	install_requires=['yolk3k'],
+	install_requires=[
+		'yolk3k',
+		'python-qdatamatrix'
+		],
 	include_package_data=True,
 	packages = ['qtpip'],
 	data_files=data_files()
