@@ -32,9 +32,8 @@ class QInstallAction(QPackageAction):
 	@decorators.may_take_time
 	def activate(self, *args):
 
-		self.qpackagematrix.log(self._pkg.install())
+		self.qpackagematrix.log(self._pkg.install()[1])
 		self.qpackagematrix.refresh_pkginfo(self._pkg)
-		self.qpackagematrix.log(_(u'Installed') + u' ' + self._pkg.name)
 
 
 class QUninstallAction(QPackageAction):
@@ -47,9 +46,8 @@ class QUninstallAction(QPackageAction):
 	@decorators.may_take_time
 	def activate(self, *args):
 
-		self.qpackagematrix.log(self._pkg.uninstall())
+		self.qpackagematrix.log(self._pkg.uninstall()[1])
 		self.qpackagematrix.refresh_pkginfo(self._pkg)
-		self.qpackagematrix.log(_(u'Uninstalled') + u' ' + self._pkg.name)
 
 
 class QUpdateAction(QPackageAction):
@@ -63,9 +61,8 @@ class QUpdateAction(QPackageAction):
 	def activate(self, *args):
 
 		self.qpackagematrix.log(
-			self._pkg.install(version=self._pkg.latest_version))
+			self._pkg.install(version=self._pkg.latest_version)[1])
 		self.qpackagematrix.refresh_pkginfo(self._pkg)
-		self.qpackagematrix.log(_(u'Updated') + u' ' + self._pkg.name)
 
 
 class QPackageMenu(QtWidgets.QMenu):
@@ -80,10 +77,11 @@ class QPackageMenu(QtWidgets.QMenu):
 			return
 		self.pkg = self._qpackagematrix._qpipwidget.pm.package(
 			self._qpackagematrix.dm[row].package)
+		self._qpackagematrix.refresh_pkginfo(self.pkg)
 		if not self.pkg.is_installed:
 			self.addAction(QInstallAction(self))
 			return
-		self._qpackagematrix.refresh_pkginfo(self.pkg)
 		if not self.pkg.is_latest:
 			self.addAction(QUpdateAction(self))
-		self.addAction(QUninstallAction(self))
+		if self.pkg.is_writable:
+			self.addAction(QUninstallAction(self))

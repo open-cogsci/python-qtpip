@@ -2,16 +2,7 @@
 
 from __future__ import unicode_literals
 from qtpip._package import Package
-import re
-import sys
-import pip
 from yolk import pypi, yolklib
-try:
-	# Python 2
-	from StringIO import StringIO
-except ImportError:
-	# Python 3
-	from io import StringIO
 	
 	
 class PackageManager(object):
@@ -19,7 +10,6 @@ class PackageManager(object):
 	def __init__(self):
 
 		self._cheeseshop = pypi.CheeseShop()
-		self.pkg_list_pypi = self._cheeseshop.pkg_list
 
 	def package(self, pkg):
 
@@ -33,9 +23,13 @@ class PackageManager(object):
 
 	@property
 	def installed(self):
-
-		for pkg in yolklib.get_packages('all'):
-			yield Package(self, pkg.project_name, pkg.version)
+		
+		names = []
+		for dist, active in yolklib.get_distributions('active'):
+			if dist.project_name in names:
+				continue
+			names.append(dist.project_name)
+			yield Package.from_dist(self, dist)
 
 	@property
 	def outdated(self):
@@ -46,22 +40,7 @@ class PackageManager(object):
 
 	def search(self, query):
 
-		hits = []
-		lquery = query.split()
+		lquery = query.lower().split()
 		for pkg in self.available:
-			for q in lquery:
-				if q not in pkg.name:
-					break
-			else:
-				hits.append(pkg)
-		return hits
-
-	def pip_cmd(self, *cmd):
-
-		_stdout = sys.stdout
-		sys.stdout = StringIO()
-		if pip.main(list(cmd)):
-			raise Exception('pip command failed: %s' % ' '.join(cmd))
-		output = sys.stdout.getvalue()
-		sys.stdout = _stdout
-		return output
+			if all(q in pkg.name.lower() for q in lquery):
+				yield pkg

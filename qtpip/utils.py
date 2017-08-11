@@ -21,11 +21,10 @@ def pipcmd(*cmd):
 
 	_stdout = sys.stdout
 	sys.stdout = StringIO()
-	if pip.main(list(cmd)):
-		raise Exception('pip command failed: %s' % ' '.join(cmd))
+	success = not bool(pip.main(list(cmd)))
 	output = sys.stdout.getvalue()
 	sys.stdout = _stdout
-	return output
+	return success, output
 
 
 def urlread(url):

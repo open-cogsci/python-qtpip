@@ -1,17 +1,22 @@
 # coding=utf-8
 
-from __future__ import unicode_literals
+import os
 from qtpip import utils, _
 from yolk import yolklib
+
+LATEST_VERSION_UNKNOWN = _(u'Right-click to check')
+INSTALLED_VERSION_NOT_INSTALLED = _(u'Not installed')
+LOCATION_NOT_INSTALLED = _(u'Not installed')
 
 
 class Package(object):
 
-	def __init__(self, packagemanager, name, version=None):
+	def __init__(self, packagemanager, name, version=None, location=None):
 
 		self._packagemanager = packagemanager
 		self._name = name
 		self._version = version
+		self._location = location
 		self._latest_version = None
 
 	def __str__(self):
@@ -22,9 +27,24 @@ class Package(object):
 
 		return self.name == other.name
 		
-	def clear_cache(self):
+	@staticmethod
+	def from_dist(packagemanager, dist):
 		
-		self._version = self._latest_version = None
+		return Package(packagemanager, name=dist.project_name,
+			version=dist.version, location=dist.location)
+			
+	@property
+	def location(self):
+	
+		if self._location is None:
+			try:
+				dist, active = yolklib.get_distributions(
+					'active', self._name).send(None)
+			except StopIteration:
+				self._location = LOCATION_NOT_INSTALLED
+			else:
+				self._location = dist.location
+		return self._location
 
 	@property
 	def name(self):
@@ -37,8 +57,8 @@ class Package(object):
 		if self._version is None:
 			try:
 				self._version = yolklib.get_highest_installed(self.name)
-			except:
-				self._version = _(u'Not installed')
+			except IndexError:
+				self._version = INSTALLED_VERSION_NOT_INSTALLED
 		return self._version
 		
 	@property
@@ -51,29 +71,69 @@ class Package(object):
 
 		if self._latest_version is None:
 			l = self._packagemanager._cheeseshop.package_releases(self.name)
-			if l:
-				self._latest_version = l[0]
-			else:
-				self._latest_version = '?'
+			self._latest_version = l[0] if l else LATEST_VERSION_UNKNOWN
 		return self._latest_version
 
 	@property
 	def is_latest(self):
 
-		return not (self.latest_version != '?' and self.installed_version != '?' \
+		return not (self.latest_version != LATEST_VERSION_UNKNOWN \
+			and self.installed_version != INSTALLED_VERSION_NOT_INSTALLED \
 			and self.latest_version != self.installed_version)
 
 	@property
 	def is_installed(self):
 
-		return self.installed_version not in (None, _(u'Not installed'))
+		return self.installed_version not in \
+			(None, INSTALLED_VERSION_NOT_INSTALLED)
+		
+	@property	
+	def is_writable(self):
+		
+		return os.path.exists(self.location) \
+			and os.access(self.location, os.W_OK)			
 
 	def uninstall(self):
+		
+		"""
+		desc:
+			Uninstalls the current package.
+			
+		returns:
+			A (bool, str) tuple where the bool indicates if the operation was
+			successfull, and the str contains the output of pip.
+		"""
 
+		self.clear_cache()
 		return utils.pipcmd('uninstall', '-y', self.name)
 
 	def install(self, version=None):
+		
+		"""
+		desc:
+			Installs the current package.
+			
+		keywords:
+			version:
+				desc:	A version string to install another version than the
+						latest.
+				type:	[None, str]
+			
+		returns:
+			A (bool, str) tuple where the bool indicates if the operation was
+			successfull, and the str contains the output of pip.
+		"""		
 
+		self.clear_cache()
 		if version is None:
 			return utils.pipcmd('install', self.name)
 		return utils.pipcmd('install', '%s==%s' % (self.name, version))
+
+	def clear_cache(self):
+		
+		"""
+		desc:
+			Clears the package cache.
+		"""
+		
+		self._version = self._latest_version = self._location = None
