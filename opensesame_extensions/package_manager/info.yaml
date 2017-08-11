@@ -1,0 +1,7 @@
+label: Package manager
+icon: system-software-install
+menu:
+  index: -1
+  separator_after: false
+  separator_before: false
+  submenu: Tools
