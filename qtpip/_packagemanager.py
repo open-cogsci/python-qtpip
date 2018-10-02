@@ -19,9 +19,10 @@ along with QtPip.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
 from qtpip._package import Package
+from qtpip import utils
 from yolk import pypi, yolklib
-	
-	
+
+
 class PackageManager(object):
 
 	def __init__(self):
@@ -33,14 +34,8 @@ class PackageManager(object):
 		return Package(self, pkg)
 
 	@property
-	def available(self):
-
-		for name in self._cheeseshop.pkg_list:
-			yield Package(self, name)
-
-	@property
 	def installed(self):
-		
+
 		names = []
 		for dist, active in yolklib.get_distributions('active'):
 			if dist.project_name in names:
@@ -57,7 +52,5 @@ class PackageManager(object):
 
 	def search(self, query):
 
-		lquery = query.lower().split()
-		for pkg in self.available:
-			if all(q in pkg.name.lower() for q in lquery):
-				yield pkg
+		for name in utils.search_pypi(*query.lower().split()):
+			yield Package(self, name)

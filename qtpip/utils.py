@@ -19,7 +19,10 @@ along with QtPip.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
 import sys
-import pip
+try:
+	import pip._internal as pipmain
+except ImportError:
+	import pip as pipmain
 try:
 	from StringIO import StringIO
 except ImportError:
@@ -29,16 +32,12 @@ try:
 except ImportError:
 	from urllib import urlopen
 
-TMPL_URL_PKGINFO = 'https://pypi.python.org/pypi?name=%s&:action=display_pkginfo'
-REGEX_PKGINFO = r'^(?P<pkg>[a-zA-Z0-9_\-.]+) \((?P<version>[a-zA-Z0-9_\-.]+)\)'
-REGEX_PKGINFO_VERSION = r'^Version: (?P<version>[a-zA-Z0-9_\-.]+)$'
-
 
 def pipcmd(*cmd):
 
 	_stdout = sys.stdout
 	sys.stdout = StringIO()
-	success = not bool(pip.main(list(cmd)))
+	success = not bool(pipmain.main(list(cmd)))
 	output = sys.stdout.getvalue()
 	sys.stdout = _stdout
 	return success, output
@@ -48,3 +47,26 @@ def urlread(url):
 
 	fd = urlopen(url)
 	return fd.read().decode('utf-8')
+
+
+def search_pypi(*query):
+
+	if len(query) > 1:
+		results = set(search_pypi(query[0]))
+		for q in query[1:]:
+			if not results:
+				return
+			results &= set(search_pypi(q))
+		return sorted(results)
+	success, output = pipcmd('search', query[0])
+	if not success:
+		return
+	packages = []
+	for line in output.split('\n'):
+		if not line or line.startswith(' '):
+			continue
+		lst = line.split(' ')
+		if not lst:
+			continue
+		packages.append(lst[0])
+	return sorted(packages)

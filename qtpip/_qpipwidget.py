@@ -23,11 +23,11 @@ from qtpip import PackageManager, QPackageMatrix, decorators
 
 
 class QPipWidget(QtWidgets.QWidget):
-	
+
 	installed = QtCore.Signal('QString')
 	uninstalled = QtCore.Signal('QString')
 	install_failed = QtCore.Signal('QString')
-	uninstall_failed = QtCore.Signal('QString')	
+	uninstall_failed = QtCore.Signal('QString')
 
 	def __init__(self, parent=None):
 
@@ -40,27 +40,26 @@ class QPipWidget(QtWidgets.QWidget):
 		self.ui.searchbox.editingFinished.connect(self.search)
 		self.ui.button_show_installed.clicked.connect(self.show_installed)
 		self.ui.button_show_updates.clicked.connect(self.show_updates)
-		self.ui.button_show_available.clicked.connect(self.show_available)
 		self.ui.button_cancel.clicked.connect(self._set_cancelled)
 		self.ui.button_cancel.hide()
 		self.ui.qdm = QPackageMatrix(self)
 		self.ui.vbox.addWidget(self.ui.qdm)
-		
+
 	def log(self, msg):
-		
+
 		print(msg)
-		
+
 	def _set_cancelled(self):
-		
+
 		self._cancelled = True
-		
+
 	@decorators.may_take_time
 	def search(self):
 
 		query = self.ui.searchbox.text()
 		if len(query) < 3:
 			return
-		self.ui.qdm.set_pkglist(self.pm.search(query))		
+		self.ui.qdm.set_pkglist(self.pm.search(query))
 
 	@decorators.may_take_time
 	def show_installed(self, *args):
@@ -71,8 +70,3 @@ class QPipWidget(QtWidgets.QWidget):
 	def show_updates(self, *args):
 
 		self.ui.qdm.set_pkglist(self.pm.outdated)
-
-	@decorators.may_take_time
-	def show_available(self, *args):
-
-		self.ui.qdm.set_pkglist(self.pm.available)

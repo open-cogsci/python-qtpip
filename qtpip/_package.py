@@ -43,16 +43,16 @@ class Package(object):
 	def __eq__(self, other):
 
 		return self.name == other.name
-		
+
 	@staticmethod
 	def from_dist(packagemanager, dist):
-		
+
 		return Package(packagemanager, name=dist.project_name,
 			version=dist.version, location=dist.location)
-			
+
 	@property
 	def location(self):
-	
+
 		if self._location is None:
 			try:
 				dist, active = yolklib.get_distributions(
@@ -77,18 +77,22 @@ class Package(object):
 			except IndexError:
 				self._version = INSTALLED_VERSION_NOT_INSTALLED
 		return self._version
-		
+
 	@property
 	def latest_version_known(self):
-		
+
 		return self._latest_version is not None
 
 	@property
 	def latest_version(self):
 
 		if self._latest_version is None:
-			l = self._packagemanager._cheeseshop.package_releases(self.name)
-			self._latest_version = l[0] if l else LATEST_VERSION_UNKNOWN
+			try:
+				l = self._packagemanager._cheeseshop.package_releases(self.name)
+			except URLError:
+				self._latest_version = LATEST_VERSION_UNKNOWN
+			else:
+				self._latest_version = l[0] if l else LATEST_VERSION_UNKNOWN
 		return self._latest_version
 
 	@property
@@ -103,19 +107,19 @@ class Package(object):
 
 		return self.installed_version not in \
 			(None, INSTALLED_VERSION_NOT_INSTALLED)
-		
-	@property	
+
+	@property
 	def is_writable(self):
-		
+
 		return os.path.exists(self.location) \
-			and os.access(self.location, os.W_OK)			
+			and os.access(self.location, os.W_OK)
 
 	def uninstall(self):
-		
+
 		"""
 		desc:
 			Uninstalls the current package.
-			
+
 		returns:
 			A (bool, str) tuple where the bool indicates if the operation was
 			successfull, and the str contains the output of pip.
@@ -125,21 +129,21 @@ class Package(object):
 		return utils.pipcmd('uninstall', '-y', self.name)
 
 	def install(self, version=None):
-		
+
 		"""
 		desc:
 			Installs the current package.
-			
+
 		keywords:
 			version:
 				desc:	A version string to install another version than the
 						latest.
 				type:	[None, str]
-			
+
 		returns:
 			A (bool, str) tuple where the bool indicates if the operation was
 			successfull, and the str contains the output of pip.
-		"""		
+		"""
 
 		self.clear_cache()
 		if version is None:
@@ -147,10 +151,10 @@ class Package(object):
 		return utils.pipcmd('install', '%s==%s' % (self.name, version))
 
 	def clear_cache(self):
-		
+
 		"""
 		desc:
 			Clears the package cache.
 		"""
-		
+
 		self._version = self._latest_version = self._location = None

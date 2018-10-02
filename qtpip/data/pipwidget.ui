@@ -14,7 +14,16 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="vbox">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>6</number>
+   </property>
+   <property name="topMargin">
+    <number>6</number>
+   </property>
+   <property name="rightMargin">
+    <number>6</number>
+   </property>
+   <property name="bottomMargin">
     <number>6</number>
    </property>
    <item>
@@ -23,7 +32,16 @@
       <property name="spacing">
        <number>12</number>
       </property>
-      <property name="margin">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
        <number>0</number>
       </property>
       <item>
@@ -40,8 +58,7 @@
         </property>
         <property name="icon">
          <iconset theme="edit-find">
-          <normaloff/>
-         </iconset>
+          <normaloff>.</normaloff>.</iconset>
         </property>
        </widget>
       </item>
@@ -59,8 +76,7 @@
         </property>
         <property name="icon">
          <iconset theme="system-software-install">
-          <normaloff/>
-         </iconset>
+          <normaloff>.</normaloff>.</iconset>
         </property>
        </widget>
       </item>
@@ -71,18 +87,7 @@
         </property>
         <property name="icon">
          <iconset theme="system-software-update">
-          <normaloff/>
-         </iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="button_show_available">
-        <property name="text">
-         <string>Show available</string>
-        </property>
-        <property name="icon">
-         <iconset theme="system-software-install"/>
+          <normaloff>.</normaloff>.</iconset>
         </property>
        </widget>
       </item>
@@ -112,8 +117,7 @@
      </property>
      <property name="icon">
       <iconset theme="process-stop">
-       <normaloff/>
-      </iconset>
+       <normaloff>.</normaloff>.</iconset>
      </property>
     </widget>
    </item>

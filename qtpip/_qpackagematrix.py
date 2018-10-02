@@ -37,10 +37,10 @@ class QPackageMatrix(QDataMatrix):
 		QDataMatrix.__init__(self, dm)
 		self._spreadsheet.verticalHeader().hide()
 		self._spreadsheet.contextMenuEvent = self.context_menu
-		
+
 	@property
 	def log(self):
-		
+
 		return self._qpipwidget.log
 
 	def context_menu(self, e):
@@ -55,7 +55,6 @@ class QPackageMatrix(QDataMatrix):
 		self._qpipwidget.ui.button_search.setDisabled(True)
 		self._qpipwidget.ui.button_show_installed.setDisabled(True)
 		self._qpipwidget.ui.button_show_updates.setDisabled(True)
-		self._qpipwidget.ui.button_show_available.setDisabled(True)
 		self._spreadsheet.hide()
 		self._qpipwidget.ui.label_progress.setText(_(u'Refreshing …'))
 		QtCore.QCoreApplication.processEvents()
@@ -87,22 +86,21 @@ class QPackageMatrix(QDataMatrix):
 		self._qpipwidget.ui.button_search.setDisabled(False)
 		self._qpipwidget.ui.button_show_installed.setDisabled(False)
 		self._qpipwidget.ui.button_show_updates.setDisabled(False)
-		self._qpipwidget.ui.button_show_available.setDisabled(False)
-		
+
 	def refresh(self):
-		
+
 		QDataMatrix.refresh(self)
 		self._spreadsheet.setRowCount(len(self._dm)+1)
 		self._spreadsheet.setColumnCount(4)
 		# Make cells readonly
-		for row in range(self._spreadsheet.rowCount()):
+		for row in range(0, self._spreadsheet.rowCount()):
 			for col in range(self._spreadsheet.columnCount()):
 				item = self._spreadsheet.item(row, col)
 				item.setFlags(item.flags() ^ QtCore.Qt.ItemIsEditable)
-		self._qpipwidget.ui.label_progress.hide()		
+		self._qpipwidget.ui.label_progress.hide()
 
 	def refresh_pkginfo(self, pkg):
-		
+
 		for row in self.dm:
 			if row.package != pkg.name:
 				continue
