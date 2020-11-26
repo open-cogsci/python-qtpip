@@ -32,7 +32,7 @@ def data_files():
 
 setup(
 	name="python-qtpip",
-	version='0.1.5',
+	version='0.2.0',
 	description="A graphical manager for PyPi plus an OpenSesame extension",
 	author="Sebastiaan Mathot",
 	author_email="s.mathot@cogsci.nl",
