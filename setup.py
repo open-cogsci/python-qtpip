@@ -23,40 +23,40 @@ from setuptools import setup
 
 def data_files():
 
-	return [
-		("share/opensesame_extensions/package_manager", [
-			'opensesame_extensions/package_manager/info.yaml',
-			'opensesame_extensions/package_manager/package_manager.py'
-			]),
-		]
+    return [
+        ("share/opensesame_extensions/package_manager", [
+            'opensesame_extensions/package_manager/info.yaml',
+            'opensesame_extensions/package_manager/package_manager.py'
+            ]),
+        ]
 
 setup(
-	name="python-qtpip",
-	version='0.2.0',
-	description="A graphical manager for PyPi plus an OpenSesame extension",
-	author="Sebastiaan Mathot",
-	author_email="s.mathot@cogsci.nl",
-	url="https://github.com/smathot/python-qtpip",
-	classifiers=[
-		'Intended Audience :: Science/Research',
-		'Topic :: Scientific/Engineering',
-		'Environment :: MacOS X',
-		'Environment :: Win32 (MS Windows)',
-		'Environment :: X11 Applications',
-		'License :: OSI Approved :: Apache Software License',
-		'Programming Language :: Python :: 2',
-		'Programming Language :: Python :: 3',
-	],
-	entry_points={
-		'console_scripts': [
-			'qtpip = qtpip.__main__:main'
-		]
-	},
-	install_requires=[
-		'yolk3k',
-		'python-qdatamatrix'
-		],
-	include_package_data=True,
-	packages = ['qtpip'],
-	data_files=data_files()
-	)
+    name="python-qtpip",
+    version='0.2.0',
+    description="A graphical manager for PyPi plus an OpenSesame extension",
+    author="Sebastiaan Mathot",
+    author_email="s.mathot@cogsci.nl",
+    url="https://github.com/smathot/python-qtpip",
+    classifiers=[
+        'Intended Audience :: Science/Research',
+        'Topic :: Scientific/Engineering',
+        'Environment :: MacOS X',
+        'Environment :: Win32 (MS Windows)',
+        'Environment :: X11 Applications',
+        'License :: OSI Approved :: Apache Software License',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
+    ],
+    entry_points={
+        'console_scripts': [
+            'qtpip = qtpip.__main__:main'
+        ]
+    },
+    install_requires=[
+        'yolk3k',
+        'python-qdatamatrix'
+        ],
+    include_package_data=True,
+    packages = ['qtpip'],
+    data_files=data_files()
+    )

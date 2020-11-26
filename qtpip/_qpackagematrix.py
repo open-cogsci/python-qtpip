@@ -26,86 +26,86 @@ from qdatamatrix import QDataMatrix
 
 class QPackageMatrix(QDataMatrix):
 
-	def __init__(self, qpipwidget):
+    def __init__(self, qpipwidget):
 
-		self._qpipwidget = qpipwidget
-		dm = DataMatrix()
-		dm.package = u''
-		dm.installed_version = u''
-		dm.latest_version = u''
-		dm.location = u''
-		QDataMatrix.__init__(self, dm)
-		self._spreadsheet.verticalHeader().hide()
-		self._spreadsheet.contextMenuEvent = self.context_menu
+        self._qpipwidget = qpipwidget
+        dm = DataMatrix()
+        dm.package = u''
+        dm.installed_version = u''
+        dm.latest_version = u''
+        dm.location = u''
+        QDataMatrix.__init__(self, dm)
+        self._spreadsheet.verticalHeader().hide()
+        self._spreadsheet.contextMenuEvent = self.context_menu
 
-	@property
-	def log(self):
+    @property
+    def log(self):
 
-		return self._qpipwidget.log
+        return self._qpipwidget.log
 
-	def context_menu(self, e):
+    def context_menu(self, e):
 
-		contextmenu.QPackageMenu(self).exec_(e.globalPos())
+        contextmenu.QPackageMenu(self).exec_(e.globalPos())
 
-	def set_pkglist(self, pkglist):
+    def set_pkglist(self, pkglist):
 
-		self._qpipwidget.ui.label_progress.show()
-		self._qpipwidget.ui.button_cancel.show()
-		self._qpipwidget.ui.searchbox.setDisabled(True)
-		self._qpipwidget.ui.button_search.setDisabled(True)
-		self._qpipwidget.ui.button_show_installed.setDisabled(True)
-		self._qpipwidget.ui.button_show_updates.setDisabled(True)
-		self._spreadsheet.hide()
-		self._qpipwidget.ui.label_progress.setText(_(u'Refreshing …'))
-		QtCore.QCoreApplication.processEvents()
-		names = []
-		installed_versions = []
-		latest_versions = []
-		locations = []
-		self._qpipwidget._cancelled = False
-		for i, pkg in enumerate(pkglist):
-			names.append(pkg.name)
-			installed_versions.append(pkg.installed_version)
-			latest_versions.append(pkg.latest_version \
-				if pkg.latest_version_known else LATEST_VERSION_UNKNOWN)
-			locations.append(pkg.location)
-			self._qpipwidget.ui.label_progress.setText(
-				_(u'Discovered %d package(s) (%s)') % (i+1, pkg.name))
-			QtCore.QCoreApplication.processEvents()
-			if self._qpipwidget._cancelled:
-				break
-		self._dm.length = len(names)
-		self._dm.package = names
-		self._dm.installed_version = installed_versions
-		self._dm.latest_version = latest_versions
-		self._dm.location = locations
-		self.refresh()
-		self._spreadsheet.show()
-		self._qpipwidget.ui.button_cancel.hide()
-		self._qpipwidget.ui.searchbox.setDisabled(False)
-		self._qpipwidget.ui.button_search.setDisabled(False)
-		self._qpipwidget.ui.button_show_installed.setDisabled(False)
-		self._qpipwidget.ui.button_show_updates.setDisabled(False)
+        self._qpipwidget.ui.label_progress.show()
+        self._qpipwidget.ui.button_cancel.show()
+        self._qpipwidget.ui.searchbox.setDisabled(True)
+        self._qpipwidget.ui.button_search.setDisabled(True)
+        self._qpipwidget.ui.button_show_installed.setDisabled(True)
+        self._qpipwidget.ui.button_show_updates.setDisabled(True)
+        self._spreadsheet.hide()
+        self._qpipwidget.ui.label_progress.setText(_(u'Refreshing …'))
+        QtCore.QCoreApplication.processEvents()
+        names = []
+        installed_versions = []
+        latest_versions = []
+        locations = []
+        self._qpipwidget._cancelled = False
+        for i, pkg in enumerate(pkglist):
+            names.append(pkg.name)
+            installed_versions.append(pkg.installed_version)
+            latest_versions.append(pkg.latest_version \
+                if pkg.latest_version_known else LATEST_VERSION_UNKNOWN)
+            locations.append(pkg.location)
+            self._qpipwidget.ui.label_progress.setText(
+                _(u'Discovered %d package(s) (%s)') % (i+1, pkg.name))
+            QtCore.QCoreApplication.processEvents()
+            if self._qpipwidget._cancelled:
+                break
+        self._dm.length = len(names)
+        self._dm.package = names
+        self._dm.installed_version = installed_versions
+        self._dm.latest_version = latest_versions
+        self._dm.location = locations
+        self.refresh()
+        self._spreadsheet.show()
+        self._qpipwidget.ui.button_cancel.hide()
+        self._qpipwidget.ui.searchbox.setDisabled(False)
+        self._qpipwidget.ui.button_search.setDisabled(False)
+        self._qpipwidget.ui.button_show_installed.setDisabled(False)
+        self._qpipwidget.ui.button_show_updates.setDisabled(False)
 
-	def refresh(self):
+    def refresh(self):
 
-		QDataMatrix.refresh(self)
-		self._spreadsheet.setRowCount(len(self._dm)+1)
-		self._spreadsheet.setColumnCount(4)
-		# Make cells readonly
-		for row in range(0, self._spreadsheet.rowCount()):
-			for col in range(self._spreadsheet.columnCount()):
-				item = self._spreadsheet.item(row, col)
-				item.setFlags(item.flags() ^ QtCore.Qt.ItemIsEditable)
-		self._qpipwidget.ui.label_progress.hide()
+        QDataMatrix.refresh(self)
+        self._spreadsheet.setRowCount(len(self._dm)+1)
+        self._spreadsheet.setColumnCount(4)
+        # Make cells readonly
+        for row in range(0, self._spreadsheet.rowCount()):
+            for col in range(self._spreadsheet.columnCount()):
+                item = self._spreadsheet.item(row, col)
+                item.setFlags(item.flags() ^ QtCore.Qt.ItemIsEditable)
+        self._qpipwidget.ui.label_progress.hide()
 
-	def refresh_pkginfo(self, pkg):
+    def refresh_pkginfo(self, pkg):
 
-		for row in self.dm:
-			if row.package != pkg.name:
-				continue
-			pkg.clear_cache()
-			row.installed_version = pkg.installed_version
-			row.latest_version = pkg.latest_version
-			row.location = pkg.location
-			self.refresh()
+        for row in self.dm:
+            if row.package != pkg.name:
+                continue
+            pkg.clear_cache()
+            row.installed_version = pkg.installed_version
+            row.latest_version = pkg.latest_version
+            row.location = pkg.location
+            self.refresh()

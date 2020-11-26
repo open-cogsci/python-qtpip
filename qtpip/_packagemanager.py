@@ -25,32 +25,32 @@ from yolk import pypi, yolklib
 
 class PackageManager(object):
 
-	def __init__(self):
+    def __init__(self):
 
-		self._cheeseshop = pypi.CheeseShop()
+        self._cheeseshop = pypi.CheeseShop()
 
-	def package(self, pkg):
+    def package(self, pkg):
 
-		return Package(self, pkg)
+        return Package(self, pkg)
 
-	@property
-	def installed(self):
+    @property
+    def installed(self):
 
-		names = []
-		for dist, active in yolklib.get_distributions('active'):
-			if dist.project_name in names:
-				continue
-			names.append(dist.project_name)
-			yield Package.from_dist(self, dist)
+        names = []
+        for dist, active in yolklib.get_distributions('active'):
+            if dist.project_name in names:
+                continue
+            names.append(dist.project_name)
+            yield Package.from_dist(self, dist)
 
-	@property
-	def outdated(self):
+    @property
+    def outdated(self):
 
-		for pkg in self.installed:
-			if not pkg.is_latest:
-				yield pkg
+        for pkg in self.installed:
+            if not pkg.is_latest:
+                yield pkg
 
-	def search(self, query):
+    def search(self, query):
 
-		for name in utils.search_pypi(*query.lower().split()):
-			yield Package(self, name)
+        for name in utils.search_pypi(*query.lower().split()):
+            yield Package(self, name)
