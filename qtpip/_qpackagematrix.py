@@ -90,13 +90,14 @@ class QPackageMatrix(QDataMatrix):
     def refresh(self):
 
         QDataMatrix.refresh(self)
-        self._spreadsheet.setRowCount(len(self._dm)+1)
+        self._spreadsheet.setRowCount(len(self._dm) + 1)
         self._spreadsheet.setColumnCount(4)
         # Make cells readonly
         for row in range(0, self._spreadsheet.rowCount()):
             for col in range(self._spreadsheet.columnCount()):
                 item = self._spreadsheet.item(row, col)
-                item.setFlags(item.flags() ^ QtCore.Qt.ItemIsEditable)
+                if item is not None:
+                    item.setFlags(item.flags() ^ QtCore.Qt.ItemIsEditable)
         self._qpipwidget.ui.label_progress.hide()
 
     def refresh_pkginfo(self, pkg):
