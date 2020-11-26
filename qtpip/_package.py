@@ -89,7 +89,7 @@ class Package(object):
         if self._latest_version is None:
             try:
                 l = self._packagemanager._cheeseshop.package_releases(self.name)
-            except URLError:
+            except BaseException:
                 self._latest_version = LATEST_VERSION_UNKNOWN
             else:
                 self._latest_version = l[0] if l else LATEST_VERSION_UNKNOWN

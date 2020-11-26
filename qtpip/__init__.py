@@ -18,7 +18,7 @@ along with QtPip.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 
-__version__ = u'0.2.1'
+__version__ = u'0.3.0'
 _ = lambda s: s
 
 from qtpip._qpackagematrix import QPackageMatrix

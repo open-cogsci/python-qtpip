@@ -19,14 +19,7 @@ along with QtPip.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
 import sys
-try:
-    import pip._internal as pipmain
-except ImportError:
-    import pip as pipmain
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
+import subprocess
 try:
     from urllib.request import urlopen
 except ImportError:
@@ -35,12 +28,16 @@ except ImportError:
 
 def pipcmd(*cmd):
 
-    _stdout = sys.stdout
-    sys.stdout = StringIO()
-    success = not bool(pipmain.main(list(cmd)))
-    output = sys.stdout.getvalue()
-    sys.stdout = _stdout
-    return success, output
+    try:
+        cp = subprocess.run(
+            ['pip'] + list(cmd),
+            capture_output = True,
+            timeout = 10,
+            text = True
+        )
+    except subprocess.TimeoutExpired:
+        return False, ''
+    return True, cp.stdout
 
 
 def urlread(url):
